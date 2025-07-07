@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% block title %}Search Records{% endblock %}
+
+{% block content %}
+<style>
+  .form-title {
+    font-size: 26px;
+    font-weight: 700;
+    color: #336699; 
+    text-align: center;
+    margin-bottom: 30px;
+  }
+
+  .search-form label {
+    font-weight: 600;
+    color: #003366; 
+  }
+
+  .search-form .form-control,
+  .search-form .form-select {
+    border-radius: 6px;
+    font-size: 15px;
+    border: 1px solid #cfddeb;
+  }
+
+  .search-form .btn {
+    font-weight: 600;
+    padding: 10px 25px;
+    background: linear-gradient(90deg, #4A90E2, #336699);
+    border: none;
+    color: white;
+    border-radius: 6px;
+  }
+
+  .search-form .btn:hover {
+    background: linear-gradient(90deg, #336699, #4A90E2);
+  }
+.btn-export {
+  font-weight: 600;
+  padding: 10px 22px;
+  font-size: 15px;
+  border-radius: 6px;
+  color: #fff;
+  background: linear-gradient(90deg, #4A90E2, #336699); 
+  border: none;
+  transition: background 0.3s ease, transform 0.2s ease;
+  box-shadow: 0 4px 10px rgba(52, 104, 185, 0.3);         
+}
+
+.btn-export:hover {
+  background: linear-gradient(90deg, #336699, #4A90E2);
+  transform: translateY(-2px);
+}
+
+  .results-table {
+    background-color: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.1);
+  }
+
+  .results-table th {
+    background-color: #4A90E2;
+    color: white;
+    font-weight: 600;
+    text-transform: uppercase;
+  }
+
+  .results-table td {
+    background-color: #f4f7fa;
+    color: #003366;
+  }
+
+  .btn-success {
+    background-color: #2b7a78;
+    border: none;
+  }
+
+  .btn-success:hover {
+    background-color: #205d5c;
+  }
+</style>
+
+
+<div class="form-title">
+  <i class="fas fa-search me-2"></i>Search Inventory Records
+</div>
+
+{% if results %}
+  <a href="{{ url_for('search.export_excel',
+                      emp_name=emp_name,
+                      emp_dep=emp_dep,
+                      item_id=item_val,
+                      date=date_raw) }}"
+     class="btn btn-export mb-3">
+    <i class="fas fa-file-excel"></i> Export to Excel
+  </a>
+{% endif %}
+
+<form method="post" class="row g-3 mb-5 search-form">
+  <div class="col-md-3">
+    <label for="emp_name">Employee Name</label>
+    <input type="text" class="form-control" name="emp_name" id="emp_name">
+  </div>
+  <div class="col-md-3">
+    <label for="emp_dep">Department</label>
+    <input type="text" class="form-control" name="emp_dep" id="emp_dep">
+  </div>
+  <div class="col-md-3">
+    <label for="item_id">Item</label>
+    <select class="form-select" name="item_id" id="item_id">
+      <option value="">-- All --</option>
+      {% for item in items %}
+        <option value="{{ item.name }}">{{ item.name }}</option>
+      {% endfor %}
+    </select>
+  </div>
+  <div class="col-md-3">
+    <label for="date">Date</label>
+    <input type="date" class="form-control" name="date" id="date">
+  </div>
+  <div class="col-12 text-center mt-3">
+    <button type="submit" class="btn">
+      <i class="fas fa-filter me-1"></i> Search
+    </button>
+  </div>
+</form>
+
+{% if results %}
+  <div class="table-responsive results-table">
+    <table class="table table-bordered text-center">
+      <thead>
+        <tr>
+          <th>Item</th>
+          <th>Quantity</th>
+          <th>Employee</th>
+          <th>Department</th>
+          <th>Date</th>
+          <th>Ticket</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in results %}
+          <tr>
+            <td>{{ r.item_id }}</td>
+            <td>{{ r.qty }}</td>
+            <td>{{ r.emp_name }}</td>
+            <td>{{ r.emp_dep }}</td>
+            <td>{{ r.created }}</td>
+            <td>{{ r.ticket }}</td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+
+
+{% endif %}
+{% endblock %}

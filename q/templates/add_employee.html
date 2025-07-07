@@ -1,0 +1,93 @@
+{% extends 'base.html' %}
+{% block title %}Add New Employee{% endblock %}
+
+{% block content %}
+<style>
+  .form-container {
+    background-color: #ffffff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 6px 18px rgba(74, 144, 226, 0.2);
+    max-width: 700px;
+    margin: auto;
+  }
+
+  .form-header {
+    font-size: 26px;
+    font-weight: 700;
+    text-align: center;
+    color: #336699;
+    margin-bottom: 30px;
+  }
+
+  label {
+    font-weight: 600;
+    color: #003366;
+    margin-bottom: 5px;
+  }
+
+  .form-control, .form-select {
+    border-radius: 6px;
+    font-size: 15px;
+    border: 1px solid #cfddeb;
+  }
+
+  .btn-submit {
+    background: linear-gradient(90deg, #4A90E2, #336699);
+    color: #fff;
+    padding: 12px 24px;
+    font-weight: 600;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    transition: background 0.3s ease;
+  }
+
+  .btn-submit:hover {
+    background: linear-gradient(90deg, #336699, #4A90E2);
+  }
+
+  .alert {
+    font-weight: 500;
+  }
+</style>
+
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="alert alert-{{ category }} text-center">{{ message }}</div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+<div class="form-container">
+  <div class="form-header">
+    <i class="fas fa-user-plus me-2"></i>Add New Employee
+  </div>
+
+  <form method="post">
+    <!-- Employee Name -->
+    <div class="mb-3">
+      <label for="emp_name"><i class="fas fa-user me-1"></i> Employee Name</label>
+      <input type="text" class="form-control" name="emp_name" id="emp_name" required>
+    </div>
+
+    <!-- Department -->
+    <div class="mb-3">
+      <label for="emp_dep"><i class="fas fa-building me-1"></i> Department</label>
+      <input type="text" class="form-control" name="emp_dep" id="emp_dep" required>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="text-center mt-4">
+      <button type="submit" class="btn btn-submit">
+        <i class="fas fa-user-plus me-1"></i> Add Employee
+      </button>
+    </div>
+  </form>
+
+  <br>
+  <a href="{{ url_for('outgoing.subtract') }}">Back to Deduct Item from Inventory</a>
+</div>
+
+{% endblock %}

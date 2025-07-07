@@ -1,0 +1,124 @@
+{% extends 'base.html' %}
+
+{% block title %}Add Incoming Item{% endblock %}
+
+{% block content %}
+<style>
+  .form-wrapper {
+    background-color: #ffffff;
+    border-radius: 12px;
+    padding: 30px;
+    box-shadow: 0 4px 12px rgba(74, 144, 226, 0.2); 
+    max-width: 600px;
+    margin: auto;
+  }
+
+  .form-title {
+    font-weight: 700;
+    font-size: 24px;
+    color: #336699; 
+    margin-bottom: 25px;
+    text-align: center;
+  }
+
+  label {
+    font-weight: 600;
+    margin-bottom: 6px;
+    color: #003366; 
+  }
+
+  .form-control,
+  .form-select {
+    border: 1px solid #cfddeb;
+  }
+
+  .btn-submit {
+    width: 100%;
+    padding: 12px;
+    font-weight: 600;
+    font-size: 16px;
+    background: linear-gradient(90deg, #4A90E2, #336699);
+    color: #ffffff;
+    border: none;
+    border-radius: 6px;
+  }
+
+  .btn-submit:hover {
+    background: linear-gradient(90deg, #336699, #4A90E2);
+  }
+</style>
+
+<!-- Display Flash Messages -->
+{% with messages = get_flashed_messages() %}
+  {% if messages %}
+    <div class="alert alert-info">
+      {% for message in messages %}
+        <p>{{ message }}</p>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+
+<div class="form-wrapper">
+  <div class="form-title">
+    <i class="fas fa-plus-circle me-2"></i> Add Incoming Item
+  </div>
+
+  <form method="post">
+    <div class="mb-3">
+      <label for="item_id">Item</label>
+      <select class="form-select" name="item_id" id="item_id" required>
+        <option value="" disabled selected>Select an item</option>
+        {% for item in items %}
+          <option value="{{ item.name }}" data-qty="{{ item.ava_qty }}">
+            {{ item.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="mb-3">
+      <label for="ava_qty">Available Quantity</label>
+      <input type="number" id="ava_qty" class="form-control" readonly>
+    </div>
+
+    <div class="mb-3">
+      <label for="qty"><i class="fas fa-sort-numeric-up me-1"></i> Quantity</label>
+      <input type="number" class="form-control" name="qty" id="qty" min="1" required>
+    </div>
+
+    <button type="submit" class="btn btn-submit">
+      <i class="fas fa-check-circle me-1"></i> Submit
+    </button>
+  </form>
+</div>
+
+<!-- Link to Add New Item Page -->
+<div class="form-wrapper" style="text-align: center;">
+  <p>Don't have the item? <a href="{{ url_for('incoming.add_item') }}" class="btn btn-link">Add New Item</a></p>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const selectEl = document.getElementById('item_id');
+  const qtyField = document.getElementById('ava_qty');
+  const submitBtn = document.querySelector('button[type="submit"]');
+
+  selectEl.addEventListener('change', () => {
+    const selectedOption = selectEl.options[selectEl.selectedIndex];
+    qtyField.value = selectedOption.dataset.qty || ''; // Reset if no item is selected
+  });
+
+  submitBtn.addEventListener('click', (e) => {
+    const availableQty = parseInt(qtyField.value) || 0;
+    const requestedQty = parseInt(document.getElementById('qty').value) || 0;
+
+    if (requestedQty > availableQty) {
+      e.preventDefault();  // Prevent form submission
+      alert("The requested quantity exceeds the available quantity.");
+    }
+  });
+});
+</script>
+
+{% endblock %}
